@@ -143,6 +143,18 @@ After reconnecting the VPN:
 
 A lower MTU allowed the tunnel to carry larger responses by ensuring packets along the route stayed within safe size limits.
 
+For quick testing, the issue can also be fixed without modifying the VPN configuration file, by manually adjusting the MTU on the active tunnel interface:
+
+```bash
+# Check current MTU
+ip link show tun0
+
+# Apply a lower MTU temporarily
+sudo ip link set dev tun0 mtu 1000
+```
+This immediately allowed HTTP traffic to flow correctly, confirming that the failure was MTU-related.
+However, this method is temporary and resets each time the VPN reconnects.
+The permanent fix is still to update the MTU and MSS values in the .ovpn file.
 ---
 
 ## 7. Why MTU and MSS Matter (Simplified)
