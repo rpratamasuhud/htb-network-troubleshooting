@@ -40,12 +40,25 @@ At first glance, everything suggested the machine was alive and reachable. Yet H
 
 ### ✔ ICMP reachable  
 ```
-ping 10.10.11.83
+$ ping -c 5 10.10.11.83
+PING 10.10.11.83 (10.10.11.83) 56(84) bytes of data.
+64 bytes from 10.10.11.83: icmp_seq=1 ttl=63 time=22.3 ms
+64 bytes from 10.10.11.83: icmp_seq=2 ttl=63 time=22.0 ms
+64 bytes from 10.10.11.83: icmp_seq=3 ttl=63 time=22.9 ms
+64 bytes from 10.10.11.83: icmp_seq=4 ttl=63 time=22.9 ms
+64 bytes from 10.10.11.83: icmp_seq=5 ttl=63 time=22.9 ms
+
+--- 10.10.11.83 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4381ms
+rtt min/avg/max/mdev = 21.999/22.585/22.908/0.381 ms
+
 ```
 
 ### ✔ Port 80 reachable  
 ```
-nc -vz 10.10.11.83 80
+$ nc -vz 10.10.11.83 80
+
+previous.htb [10.10.11.83] 80 (http) open
 ```
 
 ### ✔ Nmap returned correct service info  
@@ -54,7 +67,39 @@ nc -vz 10.10.11.83 80
 ```
 
 ### ❌ Browser stuck loading HTTP  
+<img width="918" height="717" alt="image" src="https://github.com/user-attachments/assets/488bfec9-a823-4042-ae74-b08da2751d16" />
+
 ### ❌ `curl` hung after sending the HTTP request
+```bash
+$ curl -v http://10.10.11.83
+
+*   Trying 10.10.11.83:80...
+* Connected to 10.10.11.83 (10.10.11.83) port 80
+* using HTTP/1.x
+> GET / HTTP/1.1
+> Host: 10.10.11.83
+> User-Agent: curl/8.15.0
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 302 Moved Temporarily
+< Server: nginx/1.18.0 (Ubuntu)
+< Date: Tue, 02 Dec 2025 16:25:37 GMT
+< Content-Type: text/html
+< Content-Length: 154
+< Connection: keep-alive
+< Location: http://previous.htb/
+< 
+<html>
+<head><title>302 Found</title></head>
+<body>
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.18.0 (Ubuntu)</center>
+</body>
+</html>
+* Connection #0 to host 10.10.11.83 left intact
+
+```
 
 This indicated the TCP connection opened, the request was sent, but **the response never made it back**.
 
@@ -87,12 +132,45 @@ But then it froze. This suggested the request left your machine, the server resp
 ## 4. Clue #2 — Control Test with Another Machine
 
 Using a different HTB machine (`10.129.x.x`) produced **a full HTML response**, proving that:
+```bash
+$ curl -v 10.129.152.28     
+*   Trying 10.129.152.28:80...
+* Connected to 10.129.152.28 (10.129.152.28) port 80
+* using HTTP/1.x
+> GET / HTTP/1.1
+> Host: 10.129.152.28
+> User-Agent: curl/8.15.0
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 200 OK
+< Date: Tue, 02 Dec 2025 16:58:26 GMT
+< Server: Apache/2.4.38 (Debian)
+< Vary: Accept-Encoding
+< Content-Length: 4896
+< Content-Type: text/html; charset=UTF-8
+< 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>Login</title>
+        <meta charset="UTF-8">
+          ...
+</head>
+<body>
 
-- curl works normally  
-- The VPN connection itself works  
-- Firefox/Chromium are not misconfigured  
 
-Thus, the issue was **specific to the previous machine's response size and the tunnel path**.
+   ...
+
+</body>
+</html>
+* Connection #0 to host 10.129.152.28 left intact
+
+```
+- curl returned a complete HTML response on another HTB machine
+- This confirms the server was working normally and the tunnel was capable of carrying full responses  
+
+Thus, the issue suggest **specific to the previous machine's response size and the tunnel path**.
 
 This narrowed the problem down to **packet fragmentation inside the HTB VPN tunnel**.
 
