@@ -152,9 +152,11 @@ ip link show tun0
 # Apply a lower MTU temporarily
 sudo ip link set dev tun0 mtu 1000
 ```
+
 This immediately allowed HTTP traffic to flow correctly, confirming that the failure was MTU-related.
 However, this method is temporary and resets each time the VPN reconnects.
 The permanent fix is still to update the MTU and MSS values in the .ovpn file.
+
 ---
 
 ## 7. Why MTU and MSS Matter (Simplified)
