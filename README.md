@@ -143,7 +143,7 @@ The cause is invisible at first glance: **VPN path MTU blackholing**.
 
 By adjusting MTU/MSS manually, the entire HTTP pipeline becomes functional again.
 
-This troubleshooting flow is valuable for real-world penetration testing and network debugging—especially when working over VPN tunnels or constrained network environments.
+This troubleshooting flow is valuable for real-world penetration testing and network debugging, especially when working over VPN tunnels or constrained network environments.
 
 ---
 
@@ -167,7 +167,7 @@ Even if MSS is slightly higher, OpenVPN often auto-adjusts, but optimal pairing 
 
 ## 10. Conclusion
 
-This troubleshooting journey shows how non-obvious connectivity issues arise from deep networking mechanics. With systematic testing, comparison, and hypothesis elimination, MTU/MSS misconfiguration was identified and resolved—restoring full access to the HTB machine.
+This troubleshooting journey shows how non-obvious connectivity issues arise from deep networking mechanics. With systematic testing, comparison, and hypothesis elimination, MTU/MSS misconfiguration was identified and resolved, restoring full access to the HTB machine.
 
 This README acts both as documentation and as a learning reference for similar VPN and penetration-testing environments.
 
