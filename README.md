@@ -1,6 +1,11 @@
 # HTB VPN MTU/MSS Troubleshooting Case Study
 
-This document captures a real troubleshooting journey while working with Hack The Box (HTB) machines using OpenVPN. The issue initially appeared subtle: port scans and ICMP worked, but HTTP access consistently hung with no response. The investigation uncovered deeper network behavior related to MTU and MSS configurations.
+This document presents a technical analysis of a network connectivity anomaly encountered on an HTB machine accessed through an OpenVPN tunnel. Although the host responded normally at the ICMP and service-scanning layers, HTTP traffic failed to load at the application layer. This case study outlines the observed symptoms, validation steps, and packet-level reasoning that led to the identification of an MTU/MSS mismatch as the root cause.
+
+## Executive Summary
+A connectivity anomaly was encountered  during an HTB assessment where HTTP traffic failed to load through an OpenVPN tunnel, despite the host being fully reachable at the ICMP, routing, and port-scanning layers. Initial tests indicated that TCP connections were established but stalled during data transfer, suggesting a packet-level transmission issue rather than an application-level failure.
+
+Further investigation revealed that VPN traffic exceeded the available MTU, causing silent packet drops without triggering explicit error messages. Because TCP packet sizes were larger than the permitted path MTU, the handshake completed successfully while subsequent HTTP data transmission failed. Adjusting the OpenVPN parameters (`tun-mtu` and `mssfix`) restored stable data flow and resolved the issue.
 
 ---
 ## Table of Contents
@@ -109,21 +114,32 @@ This explains:
 - why the HTTP response froze (large incoming packet)
 
 ---
+In short, the outgoing HTTP request succeeded because it was small, but the incoming
+HTTP response exceeded the tunnel’s effective MTU. Since fragmentation negotiation
+was blocked, oversized packets were silently dropped. This caused curl and browsers
+to hang even though the server responded normally.
+
+---
 
 ## 6. Fix — Manually Reduce MTU and MSS
 
-Updating the `.ovpn` file resolved the issue:
+To prevent oversized packets from exceeding the tunnel’s limits, the MTU and MSS
+values were manually reduced inside the `.ovpn` configuration file:
+
 
 ```
 tun-mtu 1300
 mssfix 1200
 ```
 
-After reconnecting:
+This forces the VPN client to:
+- send packets no larger than 1300 bytes, and  
+- automatically clamp TCP MSS to a safe lower value.
 
-### ✔ Browser worked  
-### ✔ `curl` returned full HTML  
-### ✔ No hanging HTTP requests  
+After reconnecting the VPN:
+- HTTP traffic started working immediately  
+- curl successfully received full HTML responses  
+- browsers (Firefox/Chromium) stopped hanging    
 
 A lower MTU allowed the tunnel to carry larger responses by ensuring packets along the route stayed within safe size limits.
 
@@ -220,4 +236,5 @@ Even if MSS is slightly higher, OpenVPN often auto-adjusts, but optimal pairing 
 This troubleshooting journey shows how non-obvious connectivity issues arise from deep networking mechanics. With systematic testing, comparison, and hypothesis elimination, MTU/MSS misconfiguration was identified and resolved, restoring full access to the HTB machine.
 
 This README acts both as documentation and as a learning reference for similar VPN and penetration-testing environments.
+
 
