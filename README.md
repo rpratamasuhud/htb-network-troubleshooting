@@ -1,6 +1,6 @@
 # HTB VPN MTU/MSS Troubleshooting Case Study
 
-This document presents a technical analysis of a network connectivity anomaly encountered on an HTB machine accessed through an OpenVPN tunnel. Although the host responded normally at the ICMP and service-scanning layers, HTTP traffic failed to load at the application layer. This case study outlines the observed symptoms, validation steps, and packet-level reasoning that led to the identification of an MTU/MSS mismatch as the root cause.
+This write-up documents a real issue I encountered while working on an HTB machine, an issue that looked trivial at first but turned out to be a deeper networking problem. I’m documenting it to help others who might face similar VPN-related behavior and to strengthen my own understanding of MTU/MSS interactions.
 
 ## Executive Summary
 A connectivity anomaly was encountered  during an HTB assessment where HTTP traffic failed to load through an OpenVPN tunnel, despite the host being fully reachable at the ICMP, routing, and port-scanning layers. Initial tests indicated that TCP connections were established but stalled during data transfer, suggesting a packet-level transmission issue rather than an application-level failure.
