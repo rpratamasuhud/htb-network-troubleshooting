@@ -164,18 +164,18 @@ Reducing MTU (and optionally MSS) ensures packets fit safely through the tunnel.
             causing stalls, infinite loading, or connection hangs.
 
 
-###  What Happens When MTU Is Too Large (Simplified)
+### What Happens When MTU Is Too Large (Simplified)
 
-   Normal-sized packet (OK)
-   -----------------------------------------------------
-   | VPN | IP | TCP | DATA.............. |  <  MTU     |
-   -----------------------------------------------------
+Normal-sized packet (OK)
+-----------------------------------------------------
+| VPN | IP | TCP | DATA.............. |  <  MTU     |
+-----------------------------------------------------
 
-   Oversized packet (Dropped)
-   --------------------------------------------------------------
-   | VPN | IP | TCP | DATA...................................... |
-   --------------------------------------------------------------
-                       ^ Too large → exceeds MTU → packet dropped
+Oversized packet (Dropped)
+--------------------------------------------------------------
+| VPN | IP | TCP | DATA...................................... |
+--------------------------------------------------------------
+                           ^ Too large → exceeds MTU → packet dropped
 
 ---
 
