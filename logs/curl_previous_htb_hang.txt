@@ -1,0 +1,8 @@
+curl -v http://previous.htb
+
+* Host previous.htb:80 was resolved.
+* IPv4: 10.10.11.83
+* Connected to previous.htb
+> GET /
+* Request completely sent off
+^C (hang)

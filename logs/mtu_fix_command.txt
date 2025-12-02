@@ -1,0 +1,2 @@
+sudo ip link set tun0 mtu 1000
+

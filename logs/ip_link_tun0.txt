@@ -1,0 +1,2 @@
+10: tun0: <POINTOPOINT,UP,LOWER_UP> mtu 1500
+

@@ -1,0 +1,17 @@
+curl -v http://10.10.11.83
+
+*   Trying 10.10.11.83:80...
+* Connected to 10.10.11.83 (10.10.11.83) port 80
+* using HTTP/1.x
+> GET / HTTP/1.1
+> Host: 10.10.11.83
+> User-Agent: curl/8.15.0
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/1.1 302 Moved Temporarily
+< Server: nginx/1.18.0 (Ubuntu)
+< Location: http://previous.htb/
+<html>
+<h1>302 Found</h1>
+</html>
