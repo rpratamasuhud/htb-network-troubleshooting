@@ -141,6 +141,42 @@ If MTU is too large for the VPN path, and ICMP is blocked, automatic fragmentati
 
 Reducing MTU (and optionally MSS) ensures packets fit safely through the tunnel.
 
+###  MTU, MSS, and VPN Tunnel Interaction
+
+                +-------------------------------------------------------+
+                |                   Original Packet                     |
+                |                                                       |
+                |          [ IP Header | TCP Header |   Data   ]        |
+                |                          (MSS)                        |
+                +-------------------------------------------------------+
+                                        |
+                                        | Encapsulated inside VPN
+                                        v
+                +-------------------------------------------------------+
+                |                    VPN Tunnel Packet                  |
+                |                                                       |
+                | [ VPN Header | IP Header | TCP Header |   Data   ]    |
+                |                          (MSS)                        |
+                +-------------------------------------------------------+
+                                 ↑
+                                 |
+            If this entire packet exceeds **MTU**, it gets dropped,
+            causing stalls, infinite loading, or connection hangs.
+
+
+###  What Happens When MTU Is Too Large (Simplified)
+
+   Normal-sized packet (OK)
+   -----------------------------------------------------
+   | VPN | IP | TCP | DATA.............. |  <  MTU     |
+   -----------------------------------------------------
+
+   Oversized packet (Dropped)
+   --------------------------------------------------------------
+   | VPN | IP | TCP | DATA...................................... |
+   --------------------------------------------------------------
+                       ^ Too large → exceeds MTU → packet dropped
+
 ---
 
 ## 8. Final Notes
