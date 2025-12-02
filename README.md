@@ -3,7 +3,20 @@
 This document captures a real troubleshooting journey while working with Hack The Box (HTB) machines using OpenVPN. The issue initially appeared subtle: port scans and ICMP worked, but HTTP access consistently hung with no response. The investigation uncovered deeper network behavior related to MTU and MSS configurations.
 
 ---
+## Table of Contents
+- [Overview](#overview)
+- [1. Background](#1-background)
+- [2. Initial Observations](#2-initial-observations)
+- [3. Clue #1 — The Early Redirect](#3-clue-1--the-early-redirect)
+- [4. Clue #2 — Control Test with Another Machine](#4-clue-2--control-test-with-another-machine)
+- [5. Root Cause — MTU and MSS Mismatch](#5-root-cause--mtu-and-mss-mismatch)
+- [6. Fix — Manually Reduce MTU and MSS](#6-fix--manually-reduce-mtu-and-mss)
+- [7. Why MTU and MSS Matter (Simplified)](#7-why-mtu-and-mss-matter-simplified)
+- [8. Final Notes](#8-final-notes)
+- [9. Recommended MTU Strategy](#9-recommended-mtu-strategy)
+- [10. Conclusion](#10-conclusion)
 
+---
 ## 1. Background
 
 While connected to HTB via OpenVPN, the VPN tunnel established successfully:
